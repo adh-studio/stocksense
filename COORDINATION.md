@@ -86,5 +86,5 @@ Dict `{model_name: {mae, rmse, wmape, mape, pinball, coverage_80}}`.
 - [x] Agent C — LSTM PyTorch (MAE 3.23/WMAPE 18.7%/couverture80 80.6% ; entraînement 96s)
 - [x] Agent D — évaluation (LSTM meilleur : MAE 3.23/WMAPE 18.67%/couv80 80.6% ; hgb 3.37/19.44%/78.8% ; naive 5.24/30.25%/80.4% ; 4 figures)
 - [x] Agent E — optimisation des stocks (politique modèle : fill rate >99.5%, −53 à −62% de valeur de stock, coût total −6 à −45% ; FX +10% → +8% coût stock, 80% sur imports)
-- [ ] Intégration run_pipeline + résultats
-- [ ] README + push GitHub
+- [x] Intégration run_pipeline + résultats (pipeline complet ré-exécuté OK en ~110s, résultats déterministes)
+- [x] README + push GitHub → https://github.com/heniwizeup-dotcom/stocksense

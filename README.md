@@ -6,6 +6,10 @@
 
 `Python 3.13` · `SQLite` · `scikit-learn` · `PyTorch` · `pandas` · `matplotlib`
 
+![Tableau de bord StockSense](docs/dashboard.png)
+
+> *Tableau de bord interactif ([`frontend/index.html`](frontend/index.html)) — généré à partir des sorties réelles du pipeline. Démo exécutable pas à pas dans [`notebooks/demo.ipynb`](notebooks/demo.ipynb).*
+
 ---
 
 ## 🎯 Contexte & objectif
@@ -213,6 +217,25 @@ plan de réappro) se relance avec la seule commande `python -m src.run_pipeline`
 
 ---
 
+## 🖥️ Démo & tableau de bord
+
+Deux points d'entrée pour explorer le projet sans lire tout le code :
+
+- **Tableau de bord** — [`frontend/index.html`](frontend/index.html) : une page autonome (aucune
+  dépendance, aucun serveur) qui synthétise les résultats réels du pipeline — KPI, courbe de
+  prévision avec intervalle P10–P90, comparatif des modèles, plan de réappro et exposition au
+  change. Il suffit de l'ouvrir dans un navigateur :
+  ```bash
+  open frontend/index.html      # macOS  (ou double-clic sur le fichier)
+  ```
+  Aperçu : [`docs/dashboard.png`](docs/dashboard.png).
+
+- **Notebook de démonstration** — [`notebooks/demo.ipynb`](notebooks/demo.ipynb) : parcours
+  guidé et exécuté (données → comparaison des modèles → prévision probabiliste tracée →
+  décision de réapprovisionnement chiffrée), directement lisible sur GitHub.
+
+---
+
 ## 🧰 Stack technique
 
 | Domaine | Outils |
@@ -242,6 +265,12 @@ stocksense/
 ├── sql/
 │   ├── schema.sql                # DDL star schema
 │   └── features.sql              # feature engineering (window functions)
+├── frontend/
+│   └── index.html                # tableau de bord autonome (données réelles intégrées)
+├── notebooks/
+│   └── demo.ipynb                # démo exécutée pas à pas
+├── docs/
+│   └── dashboard.png             # aperçu du tableau de bord
 ├── reports/                      # metrics.json, comparison.csv, inventory_sim.csv, preds_*.parquet
 ├── figures/                      # graphiques PNG
 ├── COORDINATION.md               # fichier de coordination (voir ci-dessous)

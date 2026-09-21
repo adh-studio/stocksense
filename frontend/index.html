@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StockSense — Tableau de bord</title>
+<style>
+  :root{
+    --bg:#0a0e17; --bg2:#0f1524; --card:#131a2b; --card2:#0f1626;
+    --line:#1e2941; --txt:#e8edf7; --mut:#8b98b4; --mut2:#5f6d8a;
+    --indigo:#6366f1; --cyan:#22d3ee; --green:#34d399; --amber:#fbbf24; --rose:#fb7185;
+    --grad:linear-gradient(135deg,#6366f1,#22d3ee);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1100px 600px at 85% -8%,rgba(99,102,241,.16),transparent 60%),
+      radial-gradient(900px 500px at 5% 0%,rgba(34,211,238,.10),transparent 55%),
+      var(--bg);
+    color:var(--txt); -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:34px 28px 56px}
+  /* Header */
+  header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:46px;height:46px;border-radius:13px;background:var(--grad);display:grid;place-items:center;
+    box-shadow:0 8px 26px rgba(99,102,241,.4);font-size:24px}
+  .brand h1{font-size:22px;margin:0;letter-spacing:-.3px;font-weight:700}
+  .brand p{margin:2px 0 0;color:var(--mut);font-size:13px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--mut);
+    background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:999px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,211,153,.16)}
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+  .kpi{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);
+    border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:3px;background:var(--grad);opacity:.9}
+  .kpi .lbl{color:var(--mut);font-size:12.5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .val{font-size:30px;font-weight:750;margin:8px 0 2px;letter-spacing:-1px}
+  .kpi .sub{color:var(--mut2);font-size:12px}
+  .kpi .val .u{font-size:16px;color:var(--mut);font-weight:600;margin-left:2px}
+  .grn{color:var(--green)} .cyn{color:var(--cyan)} .ind{color:#a5b4fc}
+  /* Layout */
+  .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+  .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .card h2{font-size:15px;margin:0 0 3px;font-weight:650;letter-spacing:-.2px}
+  .card .cap{color:var(--mut);font-size:12.5px;margin:0 0 16px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}
+  .lg{display:inline-flex;align-items:center;gap:7px}
+  .lg i{width:14px;height:4px;border-radius:2px;display:inline-block}
+  .lg .band{width:14px;height:11px;border-radius:3px;background:rgba(99,102,241,.28);border:1px solid rgba(99,102,241,.5)}
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  /* Model bars */
+  .mbar{margin:13px 0}
+  .mbar .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .mbar .name{font-weight:600}
+  .mbar .track{height:10px;background:#0c1322;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .mbar .fill{height:100%;border-radius:6px}
+  .best{color:var(--green);font-weight:700;font-size:11px;border:1px solid rgba(52,211,153,.35);
+    background:rgba(52,211,153,.1);padding:1px 8px;border-radius:999px;margin-left:8px}
+  /* Table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:right;padding:11px 8px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--mut);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  td .minibar{height:7px;background:#0c1322;border-radius:5px;overflow:hidden;margin-top:5px}
+  td .minibar > span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#10b981)}
+  tr:last-child td{border-bottom:none}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  /* FX */
+  .fx{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .fx .big{font-size:40px;font-weight:750;letter-spacing:-1.5px;color:var(--amber)}
+  .fx p{margin:0;color:var(--mut);font-size:13px;max-width:640px}
+  .fxbadge{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--amber);
+    padding:4px 11px;border-radius:999px;font-size:12px;font-weight:600}
+  /* Footer */
+  footer{margin-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--card);border:1px solid var(--line);color:var(--mut);font-size:12px;padding:6px 12px;border-radius:8px}
+  .foot-note{color:var(--mut2);font-size:12px}
+  @media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">📦</div>
+      <div>
+        <h1>StockSense</h1>
+        <p>Prévision probabiliste de la demande &amp; optimisation des stocks · import/distribution Madagascar</p>
+      </div>
+    </div>
+    <span class="pill"><span class="dot"></span> Données réelles — hold-out oct.–déc. 2024</span>
+  </header>
+
+  <!-- KPIs -->
+  <section class="kpis" id="kpis"></section>
+
+  <!-- Forecast chart -->
+  <section class="grid">
+    <div class="card">
+      <h2>Prévision de la demande</h2>
+      <p class="cap" id="chart-cap">Article représentatif — réel vs prévision, avec intervalle de confiance P10–P90</p>
+      <div id="chart"></div>
+      <div class="legend">
+        <span class="lg"><i style="background:#7c8aa8"></i> Ventes réelles</span>
+        <span class="lg"><i style="background:linear-gradient(90deg,#6366f1,#22d3ee)"></i> Prévision (P50)</span>
+        <span class="lg"><span class="band"></span> Intervalle P10–P90</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Précision des modèles</h2>
+      <p class="cap">WMAPE sur le test — plus bas = meilleur</p>
+      <div id="models"></div>
+    </div>
+  </section>
+
+  <!-- Inventory + FX -->
+  <section class="row2">
+    <div class="card">
+      <h2>Plan de réapprovisionnement</h2>
+      <p class="cap">Politique pilotée par la prévision vs pratique courante</p>
+      <table id="inv"></table>
+    </div>
+    <div class="card">
+      <h2>Exposition au taux de change</h2>
+      <p class="cap">Impact d'une hausse de +10 % du MGA/EUR sur le coût des stocks</p>
+      <div class="fx">
+        <div>
+          <div class="big" id="fx-big">+8.0%</div>
+          <span class="fxbadge">imports = <span id="fx-share">80</span>% du coût de détention</span>
+        </div>
+        <p id="fx-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="chips">
+      <span class="chip">SQL / SQLite</span>
+      <span class="chip">scikit-learn</span>
+      <span class="chip">PyTorch (LSTM)</span>
+      <span class="chip">pandas</span>
+      <span class="chip">perte pinball</span>
+      <span class="chip">EOQ · point de commande</span>
+    </div>
+    <span class="foot-note">Généré à partir des sorties réelles du pipeline · <code>python -m src.run_pipeline</code></span>
+  </footer>
+</div>
+
+<script id="data" type="application/json">
+{"series": [{"d": "2024-10-01", "a": 42.0, "p": 47.74, "lo": 37.75, "hi": 57.22}, {"d": "2024-10-02", "a": 46.0, "p": 45.12, "lo": 35.88, "hi": 54.08}, {"d": "2024-10-03", "a": 50.0, "p": 43.07, "lo": 34.31, "hi": 51.75}, {"d": "2024-10-04", "a": 42.0, "p": 42.07, "lo": 33.46, "hi": 50.55}, {"d": "2024-10-05", "a": 25.0, "p": 26.96, "lo": 20.44, "hi": 33.89}, {"d": "2024-10-06", "a": 45.0, "p": 34.88, "lo": 25.26, "hi": 44.96}, {"d": "2024-10-07", "a": 48.0, "p": 48.14, "lo": 37.66, "hi": 58.15}, {"d": "2024-10-08", "a": 40.0, "p": 47.71, "lo": 37.76, "hi": 57.28}, {"d": "2024-10-09", "a": 40.0, "p": 44.93, "lo": 35.8, "hi": 53.9}, {"d": "2024-10-10", "a": 50.0, "p": 42.28, "lo": 33.74, "hi": 50.9}, {"d": "2024-10-11", "a": 50.0, "p": 41.66, "lo": 33.18, "hi": 50.1}, {"d": "2024-10-12", "a": 29.0, "p": 27.31, "lo": 20.8, "hi": 34.33}, {"d": "2024-10-13", "a": 33.0, "p": 39.19, "lo": 28.31, "hi": 50.37}, {"d": "2024-10-14", "a": 56.0, "p": 46.39, "lo": 36.46, "hi": 56.12}, {"d": "2024-10-15", "a": 57.0, "p": 47.56, "lo": 37.65, "hi": 57.15}, {"d": "2024-10-16", "a": 59.0, "p": 46.06, "lo": 36.62, "hi": 55.27}, {"d": "2024-10-17", "a": 32.0, "p": 44.97, "lo": 35.82, "hi": 54.0}, {"d": "2024-10-18", "a": 40.0, "p": 43.44, "lo": 34.65, "hi": 52.07}, {"d": "2024-10-19", "a": 31.0, "p": 27.64, "lo": 21.11, "hi": 34.65}, {"d": "2024-10-20", "a": 21.0, "p": 17.71, "lo": 12.94, "hi": 23.18}, {"d": "2024-10-21", "a": 56.0, "p": 49.25, "lo": 38.32, "hi": 59.35}, {"d": "2024-10-22", "a": 43.0, "p": 49.4, "lo": 38.98, "hi": 59.2}, {"d": "2024-10-23", "a": 47.0, "p": 47.76, "lo": 37.89, "hi": 57.19}, {"d": "2024-10-24", "a": 42.0, "p": 45.13, "lo": 35.94, "hi": 54.14}, {"d": "2024-10-25", "a": 55.0, "p": 43.77, "lo": 34.91, "hi": 52.39}, {"d": "2024-10-26", "a": 25.0, "p": 28.28, "lo": 21.63, "hi": 35.32}, {"d": "2024-10-27", "a": 20.0, "p": 17.68, "lo": 12.88, "hi": 23.09}, {"d": "2024-10-28", "a": 42.0, "p": 50.78, "lo": 39.38, "hi": 61.16}, {"d": "2024-10-29", "a": 49.0, "p": 49.97, "lo": 39.39, "hi": 59.84}, {"d": "2024-10-30", "a": 52.0, "p": 47.66, "lo": 37.83, "hi": 57.03}, {"d": "2024-10-31", "a": 54.0, "p": 46.27, "lo": 36.79, "hi": 55.43}, {"d": "2024-11-01", "a": 82.0, "p": 59.11, "lo": 45.37, "hi": 71.07}, {"d": "2024-11-02", "a": 35.0, "p": 31.55, "lo": 24.47, "hi": 38.93}, {"d": "2024-11-03", "a": 22.0, "p": 19.59, "lo": 14.36, "hi": 25.3}, {"d": "2024-11-04", "a": 60.0, "p": 52.06, "lo": 40.29, "hi": 62.64}, {"d": "2024-11-05", "a": 60.0, "p": 50.5, "lo": 39.73, "hi": 60.47}, {"d": "2024-11-06", "a": 57.0, "p": 48.88, "lo": 38.66, "hi": 58.5}, {"d": "2024-11-07", "a": 72.0, "p": 48.17, "lo": 38.16, "hi": 57.62}, {"d": "2024-11-08", "a": 52.0, "p": 48.18, "lo": 38.15, "hi": 57.56}, {"d": "2024-11-09", "a": 38.0, "p": 30.45, "lo": 23.56, "hi": 37.65}, {"d": "2024-11-10", "a": 27.0, "p": 19.54, "lo": 14.32, "hi": 25.21}, {"d": "2024-11-11", "a": 52.0, "p": 55.75, "lo": 42.75, "hi": 67.13}, {"d": "2024-11-12", "a": 51.0, "p": 54.79, "lo": 42.66, "hi": 65.63}, {"d": "2024-11-13", "a": 54.0, "p": 52.53, "lo": 41.24, "hi": 62.8}, {"d": "2024-11-14", "a": 54.0, "p": 49.89, "lo": 39.41, "hi": 59.64}, {"d": "2024-11-15", "a": 51.0, "p": 48.33, "lo": 38.27, "hi": 57.69}, {"d": "2024-11-16", "a": 44.0, "p": 31.42, "lo": 24.38, "hi": 38.69}, {"d": "2024-11-17", "a": 22.0, "p": 19.64, "lo": 14.43, "hi": 25.3}, {"d": "2024-11-18", "a": 54.0, "p": 56.99, "lo": 43.55, "hi": 68.64}, {"d": "2024-11-19", "a": 55.0, "p": 55.59, "lo": 43.17, "hi": 66.6}, {"d": "2024-11-20", "a": 69.0, "p": 53.49, "lo": 41.87, "hi": 63.96}, {"d": "2024-11-21", "a": 58.0, "p": 52.23, "lo": 41.03, "hi": 62.44}, {"d": "2024-11-22", "a": 58.0, "p": 51.22, "lo": 40.33, "hi": 61.15}, {"d": "2024-11-23", "a": 32.0, "p": 33.45, "lo": 26.21, "hi": 40.91}, {"d": "2024-11-24", "a": 16.0, "p": 20.38, "lo": 15.05, "hi": 26.14}, {"d": "2024-11-25", "a": 52.0, "p": 57.62, "lo": 44.03, "hi": 69.35}, {"d": "2024-11-26", "a": 45.0, "p": 56.46, "lo": 43.75, "hi": 67.65}, {"d": "2024-11-27", "a": 61.0, "p": 54.22, "lo": 42.34, "hi": 64.85}, {"d": "2024-11-28", "a": 48.0, "p": 53.32, "lo": 41.72, "hi": 63.77}, {"d": "2024-11-29", "a": 47.0, "p": 51.66, "lo": 40.5, "hi": 61.74}, {"d": "2024-11-30", "a": 24.0, "p": 32.27, "lo": 25.12, "hi": 39.58}, {"d": "2024-12-01", "a": 35.0, "p": 20.21, "lo": 14.89, "hi": 25.89}, {"d": "2024-12-02", "a": 69.0, "p": 59.7, "lo": 45.29, "hi": 71.92}, {"d": "2024-12-03", "a": 47.0, "p": 58.71, "lo": 45.14, "hi": 70.41}, {"d": "2024-12-04", "a": 64.0, "p": 56.23, "lo": 43.62, "hi": 67.3}, {"d": "2024-12-05", "a": 53.0, "p": 55.67, "lo": 43.21, "hi": 66.63}, {"d": "2024-12-06", "a": 52.0, "p": 53.47, "lo": 41.64, "hi": 63.99}, {"d": "2024-12-07", "a": 38.0, "p": 33.95, "lo": 26.39, "hi": 41.57}, {"d": "2024-12-08", "a": 22.0, "p": 21.37, "lo": 15.88, "hi": 27.22}, {"d": "2024-12-09", "a": 69.0, "p": 60.56, "lo": 45.86, "hi": 72.96}, {"d": "2024-12-10", "a": 67.0, "p": 59.24, "lo": 45.48, "hi": 71.05}, {"d": "2024-12-11", "a": 52.0, "p": 58.18, "lo": 44.85, "hi": 69.71}, {"d": "2024-12-12", "a": 43.0, "p": 56.82, "lo": 43.93, "hi": 68.07}, {"d": "2024-12-13", "a": 51.0, "p": 52.0, "lo": 40.53, "hi": 62.29}, {"d": "2024-12-14", "a": 39.0, "p": 33.5, "lo": 25.88, "hi": 41.13}, {"d": "2024-12-15", "a": 31.0, "p": 21.14, "lo": 15.7, "hi": 26.95}, {"d": "2024-12-16", "a": 60.0, "p": 62.17, "lo": 46.78, "hi": 75.01}, {"d": "2024-12-17", "a": 68.0, "p": 60.54, "lo": 46.28, "hi": 72.67}, {"d": "2024-12-18", "a": 52.0, "p": 58.91, "lo": 45.3, "hi": 70.6}, {"d": "2024-12-19", "a": 52.0, "p": 56.55, "lo": 43.73, "hi": 67.74}, {"d": "2024-12-20", "a": 59.0, "p": 53.56, "lo": 41.62, "hi": 64.16}, {"d": "2024-12-21", "a": 30.0, "p": 34.86, "lo": 27.03, "hi": 42.68}, {"d": "2024-12-22", "a": 29.0, "p": 21.27, "lo": 15.8, "hi": 27.11}, {"d": "2024-12-23", "a": 72.0, "p": 62.53, "lo": 47.02, "hi": 75.45}, {"d": "2024-12-24", "a": 66.0, "p": 61.31, "lo": 46.74, "hi": 73.63}, {"d": "2024-12-25", "a": 90.0, "p": 78.31, "lo": 55.98, "hi": 95.7}, {"d": "2024-12-26", "a": 67.0, "p": 55.92, "lo": 43.08, "hi": 67.09}, {"d": "2024-12-27", "a": 44.0, "p": 55.86, "lo": 43.09, "hi": 67.0}, {"d": "2024-12-28", "a": 39.0, "p": 35.41, "lo": 27.28, "hi": 43.42}, {"d": "2024-12-29", "a": 24.0, "p": 22.31, "lo": 16.63, "hi": 28.33}, {"d": "2024-12-30", "a": 54.0, "p": 62.12, "lo": 46.76, "hi": 74.96}, {"d": "2024-12-31", "a": 66.0, "p": 59.41, "lo": 45.55, "hi": 71.3}], "series_id": {"product": 11, "store": 2}, "metrics": {"hgb": {"mae": 3.366, "rmse": 4.8017, "mape": 37.567, "wmape": 19.4378, "pinball": 1.0661, "coverage_80": 78.7726}, "lstm": {"mae": 3.2331, "rmse": 5.1095, "mape": 34.8015, "wmape": 18.6706, "pinball": 1.0276, "coverage_80": 80.5752}, "seasonal_naive": {"mae": 5.2387, "rmse": 9.0541, "mape": 50.077, "wmape": 30.2523, "pinball": 1.8362, "coverage_80": 80.3578}}, "inventory": {"assumptions": {"holding_rate_annual": 0.25, "order_cost_eur": 10.0, "shortage_penalty_factor": 1.0, "cv_flat_baseline": 0.5, "fx_mean_mga_per_eur": 4923.933695652174, "service_levels": [0.9, 0.95, 0.98]}, "by_service_level": {"0.90": {"baseline_fill_rate": 1.0, "model_fill_rate": 0.9945, "fill_rate_gain_pts": -0.54, "baseline_total_cost_mga": 391142452.0, "model_total_cost_mga": 366490120.0, "cost_reduction_pct": 6.3, "baseline_avg_stock_value_mga": 4956937176.0, "model_avg_stock_value_mga": 2339504867.0, "stock_value_reduction_pct": 52.8, "baseline_stockouts": 3, "model_stockouts": 214}, "0.95": {"baseline_fill_rate": 1.0, "model_fill_rate": 0.9964, "fill_rate_gain_pts": -0.36, "baseline_total_cost_mga": 444892025.0, "model_total_cost_mga": 312639543.0, "cost_reduction_pct": 29.73, "baseline_avg_stock_value_mga": 5828400099.0, "model_avg_stock_value_mga": 2461987325.0, "stock_value_reduction_pct": 57.76, "baseline_stockouts": 1, "model_stockouts": 125}, "0.98": {"baseline_fill_rate": 1.0, "model_fill_rate": 0.9977, "fill_rate_gain_pts": -0.23, "baseline_total_cost_mga": 505997135.0, "model_total_cost_mga": 280046683.0, "cost_reduction_pct": 44.65, "baseline_avg_stock_value_mga": 6808615599.0, "model_avg_stock_value_mga": 2604935309.0, "stock_value_reduction_pct": 61.74, "baseline_stockouts": 0, "model_stockouts": 71}}, "fx_sensitivity": {"service_ref": 0.95, "imported_share_of_holding_pct": 79.7, "holding_cost_imported_base_mga": 123614401.0, "holding_cost_imported_plus10_mga": 135975841.0, "extra_holding_cost_imported_plus10_mga": 12361440.0, "extra_holding_cost_imported_plus10_pct": 10.0, "holding_cost_total_base_mga": 155138927.0, "holding_cost_total_plus10_mga": 167500367.0, "extra_holding_cost_total_plus10_pct": 7.97, "note": "Une hausse de 10% du MGA/EUR renchérit de 10% le coût de détention des seuls articles importés ; comme ceux-ci pèsent 80% du coût de détention total, le coût d'immobilisation global du stock progresse de 8.0%. Risque de change concentré sur le portefeuille importé."}}}
+</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const fmtPct = x => (x).toFixed(1) + '%';
+
+/* ---------- KPI ---------- */
+const m = D.metrics.lstm;
+const inv95 = D.inventory.by_service_level["0.95"];
+const kpis = [
+  {lbl:'Meilleur modèle · MAE', val:m.mae.toFixed(2), cls:'cyn', sub:'LSTM — erreur moy. abs. (unités/jour)'},
+  {lbl:'Erreur relative · WMAPE', val:m.wmape.toFixed(1), u:'%', cls:'ind', sub:'−38 % vs baseline saisonnière'},
+  {lbl:'Calibration P10–P90', val:m.coverage_80.toFixed(0), u:'%', cls:'grn', sub:'couverture réelle (cible 80 %)'},
+  {lbl:'Capital immobilisé', val:'−'+inv95.stock_value_reduction_pct.toFixed(0), u:'%', cls:'grn', sub:'à service 95 % équivalent'},
+];
+document.getElementById('kpis').innerHTML = kpis.map(k=>`
+  <div class="kpi"><div class="lbl">${k.lbl}</div>
+    <div class="val ${k.cls}">${k.val}${k.u?`<span class="u">${k.u}</span>`:''}</div>
+    <div class="sub">${k.sub}</div></div>`).join('');
+
+/* ---------- Forecast SVG ---------- */
+(function(){
+  const s = D.series, W=740, H=320, mL=42, mR=12, mT=14, mB=34;
+  const iw=W-mL-mR, ih=H-mT-mB, n=s.length;
+  const yMax = Math.ceil(Math.max(...s.map(d=>d.hi))/20)*20;
+  const X = i => mL + (n<=1?0:i/(n-1)*iw);
+  const Y = v => mT + ih - (v/yMax)*ih;
+  const cap = document.getElementById('chart-cap');
+  cap.textContent = `Produit #${D.series_id.product} · Magasin #${D.series_id.store} — réel vs prévision (P50), avec intervalle P10–P90`;
+
+  let grid='';
+  for(let g=0; g<=yMax; g+=Math.round(yMax/5)){
+    const y=Y(g); grid+=`<line x1="${mL}" y1="${y}" x2="${W-mR}" y2="${y}" stroke="#1a2338" stroke-width="1"/>
+      <text x="${mL-8}" y="${y+4}" fill="#5f6d8a" font-size="11" text-anchor="end">${g}</text>`;
+  }
+  // x labels: monthly ticks
+  let xlab=''; let lastM='';
+  s.forEach((d,i)=>{const mo=d.d.slice(0,7); if(mo!==lastM){lastM=mo;
+    const lab={'2024-10':'Oct','2024-11':'Nov','2024-12':'Déc'}[mo]||mo;
+    xlab+=`<text x="${X(i)}" y="${H-10}" fill="#5f6d8a" font-size="11" text-anchor="middle">${lab}</text>`;}});
+
+  const bandTop = s.map((d,i)=>`${X(i)},${Y(d.hi)}`).join(' ');
+  const bandBot = s.map((d,i)=>`${X(i)},${Y(d.lo)}`).reverse().join(' ');
+  const band = `<polygon points="${bandTop} ${bandBot}" fill="url(#bandg)" stroke="none" opacity="0.55"/>`;
+  const lineActual = 'M'+s.map((d,i)=>`${X(i)},${Y(d.a)}`).join(' L');
+  const lineP50 = 'M'+s.map((d,i)=>`${X(i)},${Y(d.p)}`).join(' L');
+
+  document.getElementById('chart').innerHTML = `
+  <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Prévision de la demande">
+    <defs>
+      <linearGradient id="p50g" x1="0" x2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+      <linearGradient id="bandg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity=".45"/><stop offset="1" stop-color="#6366f1" stop-opacity=".08"/></linearGradient>
+    </defs>
+    ${grid}${xlab}${band}
+    <path d="${lineActual}" fill="none" stroke="#7c8aa8" stroke-width="1.6" stroke-linejoin="round" opacity=".85"/>
+    <path d="${lineP50}" fill="none" stroke="url(#p50g)" stroke-width="2.6" stroke-linejoin="round"/>
+  </svg>`;
+})();
+
+/* ---------- Models ---------- */
+(function(){
+  const order=['lstm','hgb','seasonal_naive'];
+  const names={lstm:'LSTM (PyTorch)',hgb:'HistGradientBoosting',seasonal_naive:'Seasonal-naive'};
+  const cols={lstm:'linear-gradient(90deg,#6366f1,#22d3ee)',hgb:'linear-gradient(90deg,#8b5cf6,#a78bfa)',seasonal_naive:'#475569'};
+  const max=Math.max(...order.map(k=>D.metrics[k].wmape));
+  document.getElementById('models').innerHTML = order.map((k,i)=>{
+    const w=D.metrics[k].wmape; const pct=(w/max*100).toFixed(0);
+    const col=k==='seasonal_naive'?'#475569':cols[k];
+    return `<div class="mbar"><div class="top">
+      <span class="name">${names[k]}${i===0?'<span class="best">MEILLEUR</span>':''}</span>
+      <span style="color:#8b98b4">${w.toFixed(1)}% <span style="color:#5f6d8a">· MAE ${D.metrics[k].mae.toFixed(2)}</span></span></div>
+      <div class="track"><div class="fill" style="width:${pct}%;background:${col}"></div></div></div>`;
+  }).join('');
+})();
+
+/* ---------- Inventory ---------- */
+(function(){
+  const lv=D.inventory.by_service_level; const keys=['0.90','0.95','0.98'];
+  const maxRed=Math.max(...keys.map(k=>lv[k].stock_value_reduction_pct));
+  let rows=keys.map(k=>{const r=lv[k];
+    return `<tr>
+      <td><b>${(parseFloat(k)*100).toFixed(0)} %</b></td>
+      <td>${(r.model_fill_rate*100).toFixed(1)} %</td>
+      <td class="grn"><b>−${r.cost_reduction_pct.toFixed(0)} %</b></td>
+      <td class="grn"><b>−${r.stock_value_reduction_pct.toFixed(0)} %</b>
+        <div class="minibar"><span style="width:${(r.stock_value_reduction_pct/maxRed*100).toFixed(0)}%"></span></div></td>
+    </tr>`;}).join('');
+  document.getElementById('inv').innerHTML =
+    `<thead><tr><th>Service cible</th><th>Taux de service</th><th>Coût total</th><th>Capital stock</th></tr></thead><tbody>${rows}</tbody>`;
+})();
+
+/* ---------- FX ---------- */
+(function(){
+  const fx=D.inventory.fx_sensitivity;
+  document.getElementById('fx-big').textContent = '+'+fx.extra_holding_cost_total_plus10_pct.toFixed(1)+'%';
+  document.getElementById('fx-share').textContent = Math.round(fx.imported_share_of_holding_pct);
+  document.getElementById('fx-note').textContent = fx.note;
+})();
+</script>
+</body>
+</html>

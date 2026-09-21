@@ -1,0 +1,16 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Données volumineuses & artefacts régénérables
+data/*.csv
+data/*.db
+models/*.pt
+models/*.joblib
+reports/*.parquet
+
+# OS
+.DS_Store

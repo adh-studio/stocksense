@@ -1,0 +1,67 @@
+{
+  "assumptions": {
+    "holding_rate_annual": 0.25,
+    "order_cost_eur": 10.0,
+    "shortage_penalty_factor": 1.0,
+    "cv_flat_baseline": 0.5,
+    "fx_mean_mga_per_eur": 4923.933695652174,
+    "service_levels": [
+      0.9,
+      0.95,
+      0.98
+    ]
+  },
+  "by_service_level": {
+    "0.90": {
+      "baseline_fill_rate": 1.0,
+      "model_fill_rate": 0.9945,
+      "fill_rate_gain_pts": -0.54,
+      "baseline_total_cost_mga": 391142452.0,
+      "model_total_cost_mga": 366490120.0,
+      "cost_reduction_pct": 6.3,
+      "baseline_avg_stock_value_mga": 4956937176.0,
+      "model_avg_stock_value_mga": 2339504867.0,
+      "stock_value_reduction_pct": 52.8,
+      "baseline_stockouts": 3,
+      "model_stockouts": 214
+    },
+    "0.95": {
+      "baseline_fill_rate": 1.0,
+      "model_fill_rate": 0.9964,
+      "fill_rate_gain_pts": -0.36,
+      "baseline_total_cost_mga": 444892025.0,
+      "model_total_cost_mga": 312639543.0,
+      "cost_reduction_pct": 29.73,
+      "baseline_avg_stock_value_mga": 5828400099.0,
+      "model_avg_stock_value_mga": 2461987325.0,
+      "stock_value_reduction_pct": 57.76,
+      "baseline_stockouts": 1,
+      "model_stockouts": 125
+    },
+    "0.98": {
+      "baseline_fill_rate": 1.0,
+      "model_fill_rate": 0.9977,
+      "fill_rate_gain_pts": -0.23,
+      "baseline_total_cost_mga": 505997135.0,
+      "model_total_cost_mga": 280046683.0,
+      "cost_reduction_pct": 44.65,
+      "baseline_avg_stock_value_mga": 6808615599.0,
+      "model_avg_stock_value_mga": 2604935309.0,
+      "stock_value_reduction_pct": 61.74,
+      "baseline_stockouts": 0,
+      "model_stockouts": 71
+    }
+  },
+  "fx_sensitivity": {
+    "service_ref": 0.95,
+    "imported_share_of_holding_pct": 79.7,
+    "holding_cost_imported_base_mga": 123614401.0,
+    "holding_cost_imported_plus10_mga": 135975841.0,
+    "extra_holding_cost_imported_plus10_mga": 12361440.0,
+    "extra_holding_cost_imported_plus10_pct": 10.0,
+    "holding_cost_total_base_mga": 155138927.0,
+    "holding_cost_total_plus10_mga": 167500367.0,
+    "extra_holding_cost_total_plus10_pct": 7.97,
+    "note": "Une hausse de 10% du MGA/EUR renchérit de 10% le coût de détention des seuls articles importés ; comme ceux-ci pèsent 80% du coût de détention total, le coût d'immobilisation global du stock progresse de 8.0%. Risque de change concentré sur le portefeuille importé."
+  }
+}

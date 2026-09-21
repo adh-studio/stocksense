@@ -1,0 +1,26 @@
+{
+  "hgb": {
+    "mae": 3.366,
+    "rmse": 4.8017,
+    "mape": 37.567,
+    "wmape": 19.4378,
+    "pinball": 1.0661,
+    "coverage_80": 78.7726
+  },
+  "lstm": {
+    "mae": 3.2331,
+    "rmse": 5.1095,
+    "mape": 34.8015,
+    "wmape": 18.6706,
+    "pinball": 1.0276,
+    "coverage_80": 80.5752
+  },
+  "seasonal_naive": {
+    "mae": 5.2387,
+    "rmse": 9.0541,
+    "mape": 50.077,
+    "wmape": 30.2523,
+    "pinball": 1.8362,
+    "coverage_80": 80.3578
+  }
+}

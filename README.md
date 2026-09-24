@@ -6,11 +6,11 @@
 
 `Python 3.13` · `SQLite` · `scikit-learn` · `PyTorch` · `pandas` · `matplotlib`
 
-**▶️ Démo en ligne : https://heniwizeup-dotcom.github.io/stocksense/**
+**▶️ Démo en ligne : https://adh-studio.github.io/stocksense/**
 
 ![Tableau de bord StockSense](docs/dashboard.png)
 
-> *Tableau de bord interactif ([démo live](https://heniwizeup-dotcom.github.io/stocksense/) · source [`frontend/index.html`](frontend/index.html)) — généré à partir des sorties réelles du pipeline. Démo exécutable pas à pas dans [`notebooks/demo.ipynb`](notebooks/demo.ipynb).*
+> *Tableau de bord interactif ([démo live](https://adh-studio.github.io/stocksense/) · source [`frontend/index.html`](frontend/index.html)) — généré à partir des sorties réelles du pipeline. Démo exécutable pas à pas dans [`notebooks/demo.ipynb`](notebooks/demo.ipynb).*
 
 ---
 
